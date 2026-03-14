@@ -1,0 +1,571 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Request Flow Schema",
+  "type": "object",
+  "required": ["steps"],
+  "properties": {
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+          "type": "object",
+          "properties": {
+            "action": { "const": "change_status_code" },
+            "log": { "type": "boolean" },
+            "params": { "$ref": "#/definitions/changeStatusCodeParams" }
+          },
+          "required": ["action", "params"],
+          "additionalProperties": false
+      },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "insertHeaderKey" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/insertHeaderParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "detect" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/detectParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "edit_body" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/editBodyParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "remove_body_element" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/removeBodyElementParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "edit_headers" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/editHeadersParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "reject" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/rejectParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "redirect" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/redirectParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "forward" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/forwardParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "change_body" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/changeBodyParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "extract_header" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/extractHeaderParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "remove_header" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/removeHeaderParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "extract_body_element" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/extractBodyElementParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "extract_query" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/extractQueryParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "edit_query" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/editQueryParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "remove_query" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/removeQueryParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "applyFunction" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/applyFunctionParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "const": "APGMastercard" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/APGMastercardParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          },
+              {
+            "type": "object",
+            "properties": {
+              "action": { "const": "CybersourceFlexV2" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/CybersourceFlexV2Params" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          },
+                    {
+            "type": "object",
+            "properties": {
+              "action": { "const": "customDetect" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/customDetectParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          }
+          ,
+            {
+            "type": "object",
+            "properties": {
+              "action": { "const": "extractURLParams" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/extractUrlParamsParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          },
+                      {
+            "type": "object",
+            "properties": {
+              "action": { "const": "editUrlParam" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/editUrlParamParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          },
+            {
+            "type": "object",
+            "properties": {
+              "action": { "const": "removeUrlParam" },
+              "log": { "type": "boolean" },
+              "params": { "$ref": "#/definitions/removeUrlParamParams" }
+            },
+            "required": ["action", "params"],
+            "additionalProperties": true
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "insertHeaderParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "header_key": { "type": "string" },
+        "header_value": { "type": "string" }
+      },
+
+      "required": ["method", "url_regix", "phase", "header_key", "header_value"],
+      "additionalProperties": false
+
+    },
+    "detectParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase"],
+      "additionalProperties": false
+    },
+    "APGMastercardParams": {
+      "type": "object",
+      "properties": {
+        "return_name": { "type": "string"}
+      },
+      "required": ["return_name"],
+      "additionalProperties": false
+    },
+      "CybersourceFlexV2Params": {
+      "type": "object",
+      "properties": {
+        "return_name": { "type": "string"}
+      },
+      "required": ["return_name"],
+      "additionalProperties": false
+    },
+    "editBodyParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "element_regix": { "type": "string" },
+        "new_value": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["fixed", "variable"] },
+                "value": { "type": "string" }
+              },
+              "required": ["type", "value"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["method", "url_regix", "phase", "element_regix", "new_value"],
+      "additionalProperties": false
+    },
+
+  "changeStatusCodeParams": {
+    "type": "object",
+    "properties": {
+      "method": { "type": "string" },
+      "url_regix": { "type": "string" },
+      "phase": { "type": "string" },
+      "status_code": { "type": "string" }
+    },
+    "required": ["method", "url_regix", "phase", "status_code"],
+    "additionalProperties": false
+  }
+    ,
+    "removeBodyElementParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "element_regix": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "element_regix"],
+      "additionalProperties": false
+    },
+    "editHeadersParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "values": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["fixed", "variable"] },
+                "value": { "type": "string" }
+              },
+              "required": ["type", "value"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["method", "url_regix", "phase", "values"],
+      "additionalProperties": false
+    },
+    "rejectParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase"],
+      "additionalProperties": false
+    },
+    "redirectParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "destination": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["fixed", "variable"] },
+                "value": { "type": "string" }
+              },
+              "required": ["type", "value"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["method", "url_regix", "phase", "destination"],
+      "additionalProperties": false
+    },
+    "forwardParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase"],
+      "additionalProperties": false
+    },
+    "changeBodyParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "content": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["fixed", "variable"] },
+                "value": { "type": "string" }
+              },
+              "required": ["type", "value"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["method", "url_regix", "phase", "content"],
+      "additionalProperties": false
+    },
+    "extractHeaderParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "header_key": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "header_key"],
+      "additionalProperties": false
+    },
+    "removeHeaderParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "header_key": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "header_key"],
+      "additionalProperties": false
+    },
+    "extractBodyElementParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "element_regix": { "type": "string" },
+        "return_name": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "element_regix", "return_name"],
+      "additionalProperties": false
+    },
+    "extractQueryParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "query_key": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "query_key"],
+      "additionalProperties": false
+    },
+    "editQueryParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "query_key": { "type": "string" },
+        "new_value": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["fixed", "variable"] },
+                "value": { "type": "string" }
+              },
+              "required": ["type", "value"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["method", "url_regix", "phase", "query_key", "new_value"],
+      "additionalProperties": false
+    },
+    "removeQueryParams": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "query_key": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "query_key"],
+      "additionalProperties": false
+    },
+    "applyFunctionParams": {
+      "type": "object",
+      "properties": {
+        "function": { "type": "string" }
+      },
+      "required": ["function"],
+      "additionalProperties": false
+    },
+
+    "customDetectParams":{
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "regix_type": { "type": "string", "enum": ["query", "header", "body"] },
+        "type": { "type": "string", "enum": ["fixed", "variable"] },
+        "value" : { "type": "string" }
+
+      },
+      "required": ["method", "url_regix", "phase", "regix_type", "value"],
+      "additionalProperties": false
+    },
+    "extractUrlParamsParams":{
+            "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "param_regix": { "type": "string" },
+        "return_name" : { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "param_regix", "return_name"],
+      "additionalProperties": false
+    },
+      "editUrlParamParams":{
+        "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "param_regix": { "type": "string" },
+        "new_value" : { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "param_regix", "new_value"],
+      "additionalProperties": false
+    },
+        "removeUrlParamParams":{
+        "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "url_regix": { "type": "string" },
+        "phase": { "type": "string" },
+        "param_regix": { "type": "string" }
+      },
+      "required": ["method", "url_regix", "phase", "param_regix"],
+      "additionalProperties": false
+    }
+    
+  }
+}
