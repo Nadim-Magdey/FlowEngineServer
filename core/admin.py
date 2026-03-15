@@ -77,9 +77,9 @@ class UserNotificationAdmin(admin.ModelAdmin):
 class UserMessageAdmin(admin.ModelAdmin):
     list_display = ("user", "inactive_message")
 
-@admin.register(UserProxy)
-class UserProxyAdmin(admin.ModelAdmin):
-    list_display = ("ip", "port", "username", "password")
+# @admin.register(UserProxy)
+# class UserProxyAdmin(admin.ModelAdmin):
+#     list_display = ("ip", "port", "username", "password")
 
 
 @admin.register(AllowedTelgramUsers)
@@ -88,6 +88,6 @@ class AllowedTelgramUsersAdmin(admin.ModelAdmin):
 
 @admin.register(TelegramAuthSession)
 class TelegramAuthSessionAdmin(admin.ModelAdmin):
-    readonly_fields = ("user", "telegram_id", "token", "is_authenticated")
+    readonly_fields = ("user", "telegram_id", "is_authenticated")
     list_display = ("user", "telegram_id", "is_authenticated")
     

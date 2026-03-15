@@ -369,7 +369,7 @@ def handle_start(message):
             user=user.user,
             is_authenticated=True
         )
-
+        print(f"session is created {session}")
         bot.reply_to(message, "✅ Login successful")
         print(f"Session created: {session}")
 
