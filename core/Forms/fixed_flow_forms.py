@@ -12,7 +12,7 @@ class FixedFlowsForm(forms.ModelForm):
 
     class Meta:
         model = FixedFlow
-        fields = ('name', 'is_active', 'order', 'users')
+        fields = ('name', 'is_active', 'order', 'users', "group")
 
     class Media:
         js = (

@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 import json
@@ -14,11 +15,28 @@ INPUT_SCHEMA = pathlib.Path(__file__).parent / 'schema' / 'inputs_schema.json'
 with open(INPUT_SCHEMA, "r") as f:
     INPUT_SCHEMA = json.load(f)
 
+
+class FlowConstraintGroup(models.Model):
+    name = models.CharField(max_length=200, blank=True)
+    
+    class Meta:
+        unique_together = ('name',)
+
+    def __str__(self):
+        return self.name or f"Group {self.id}"
+        
 class OptionalFlow(models.Model):
     name = models.CharField(max_length=200)
     flows = models.JSONField()
     is_active = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
+    # this is used to group flows
+    group = models.ForeignKey(
+        FlowConstraintGroup,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
 
     users = models.ManyToManyField(
         User,
@@ -46,7 +64,12 @@ class Service(models.Model):
     inputs = models.JSONField()
     flows = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    group = models.ForeignKey(
+        FlowConstraintGroup,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
 class FixedFlow(models.Model):
     name = models.CharField(max_length=200)
     flows = models.JSONField()
@@ -57,29 +80,19 @@ class FixedFlow(models.Model):
     notify_condition= models.JSONField(null=True, blank=True)
     success_value = models.JSONField(null=True, blank=True)
     notify_variables = models.JSONField(null=True, blank=True)
-    
+    group = models.ForeignKey(
+        FlowConstraintGroup,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
     class Meta:
         ordering = ["order"]
     
     def __str__(self):
         return self.name
-
-class FlowConstraint(models.Model):
-    # Generic relation to any flow type
-    left_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
-    left_object_id = models.PositiveIntegerField()
-    left_flow = GenericForeignKey('left_content_type', 'left_object_id')
-
-    right_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
-    right_object_id = models.PositiveIntegerField()
-    right_flow = GenericForeignKey('right_content_type', 'right_object_id')
-
-    class Meta:
-        unique_together = ('left_content_type', 'left_object_id', 'right_content_type', 'right_object_id')
-        
-    def __str__(self):
-        return f"{self.left_flow} ⛔ {self.right_flow}"
     
+
 class UserLogs(models.Model):
 
     user = models.CharField(max_length=100, blank=True, null=True)

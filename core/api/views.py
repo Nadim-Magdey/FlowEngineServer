@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from telebot import types
 from core.api.permission import IsValidClientRequest
 from core.api.utils import generate_token, verify_token
-from ..models import AllowedTelgramUsers, Service, FixedFlow, OptionalFlow, FlowConstraint, UserLogs, Notifications, UserProxy, TelegramAuthSession
+from ..models import AllowedTelgramUsers, Service, FixedFlow, OptionalFlow, UserLogs, Notifications, UserProxy, TelegramAuthSession
 from ..Encryptor.Algorithms import CybersourceFlexV2Encryptor, APGMastercardEncryptor 
 from rest_framework.permissions import AllowAny
 import telebot
@@ -66,6 +66,7 @@ class ServiceFlowsView(APIView):
                         "name": of.name,
                         "flows": of.flows,
                         "order": of.order,
+                        "group": of.group.name
                     }
                     for of in s.optional_flows.filter(is_active=True)
                 ]
@@ -77,6 +78,7 @@ class ServiceFlowsView(APIView):
                 "name": of.name,
                 "flows": of.flows,
                 "order": of.order,
+                "group": of.group.name
             }
             for of in request.user.optional_flows.filter(is_active=True)
         ]
@@ -89,24 +91,25 @@ class ServiceFlowsView(APIView):
                 "order": of.order,
                 "notify_condition": of.notify_condition,
                 "notify_variables": of.notify_variables,
-                "success_value": of.success_value
+                "success_value": of.success_value,
+                "group": of.group.name
             }
             for of in request.user.fixed_flows.filter(is_active=True)
         ]
 
-        flow_constraints = [
-            {
-                "left_flow": c.left_flow.name,
-                "right_flow": c.right_flow.name
-            }
-            for c in FlowConstraint.objects.all()
-        ]
+        # flow_constraints = [
+        #     {
+        #         "left_flow": c.left_flow.name,
+        #         "right_flow": c.right_flow.name
+        #     }
+        #     for c in FlowConstraint.objects.all()
+        # ]
         
         return Response({
             "services": services_data,
             "user_optional_flows": user_optional_flows,
             "user_fixed_flows": user_fixed_flows,
-            "flow_constraints": flow_constraints
+            # "flow_constraints": flow_constraints
         })
 
 class CybersourceFlexV2EncryptView(APIView):
@@ -211,36 +214,37 @@ class FlowConstraintsView(APIView):
     permission_classes = [IsAuthenticated, IsValidClientRequest]
 
     def get(self, request):
-        user = request.user
+        # user = request.user
 
-        # Get all flows related to the user
-        user_services = list(Service.objects.filter(users=user))
-        user_optional_flows = list(OptionalFlow.objects.filter(users=user))
-        fixed_flows = list(FixedFlow.objects.filter(users=user))
-        all_flows = user_services + user_optional_flows + fixed_flows
+        # # Get all flows related to the user
+        # user_services = list(Service.objects.filter(users=user))
+        # user_optional_flows = list(OptionalFlow.objects.filter(users=user))
+        # fixed_flows = list(FixedFlow.objects.filter(users=user))
+        # all_flows = user_services + user_optional_flows + fixed_flows
         
-        # Fetch all constraints
-        all_constraints = FlowConstraint.objects.all()
+        # # Fetch all constraints
+        # all_constraints = FlowConstraint.objects.all()
         
-        # Filter in Python
-        user_constraints = [
-            c for c in all_constraints
-            if c.left_flow in all_flows or c.right_flow in all_flows
-        ]
+        # # Filter in Python
+        # user_constraints = [
+        #     c for c in all_constraints
+        #     if c.left_flow in all_flows or c.right_flow in all_flows
+        # ]
 
-        data = [
-            {
-                "id": c.id,
-                "left_flow": getattr(c.left_flow, "name", str(c.left_flow)),
-                "right_flow": getattr(c.right_flow, "name", str(c.right_flow)),
-            }
-            for c in user_constraints
-        ]
+        # data = [
+        #     {
+        #         "id": c.id,
+        #         "left_flow": getattr(c.left_flow, "name", str(c.left_flow)),
+        #         "right_flow": getattr(c.right_flow, "name", str(c.right_flow)),
+        #     }
+        #     for c in user_constraints
+        # ]
 
-        return Response({
-            "status": "success",
-            "constraints": data
-        })
+        # return Response({
+        #     "status": "success",
+        #     "constraints": data
+        # })
+        pass
 
 
 class UserLogsView(APIView):

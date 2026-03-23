@@ -9,7 +9,7 @@ class OptionalFlowForm(forms.ModelForm):
 
     class Meta:
         model = OptionalFlow
-        fields = ('name','is_active','order',"users")
+        fields = ('name','is_active','order',"users", "group")
 
     class Media:
         js = (

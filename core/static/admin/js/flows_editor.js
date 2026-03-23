@@ -3,234 +3,121 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiddenField = document.querySelector('input[name="flows_json"]');
     if (!hiddenField) return;
 
-    const REGEX_TYPES = ['query', 'body', 'header'];
+    const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    const PHASES = ['request', 'response'];
 
     const container = document.createElement('div');
+    container.className = 'inline-group';
     hiddenField.closest('.form-row').after(container);
 
     /* =========================
-       ACTION DEFINITIONS
+       ACTIONS
     ========================== */
 
     const ACTIONS = {
-        detect: { method: 'GET', url_regix: '', phase: 'request' },
-
-        edit_body: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            element_regix: '',
-            new_value: ''
-        },
-
-        remove_body_element: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            element_regix: ''
-        },
-
-        edit_headers: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            value: ''
-        },
-
-        reject: { method: 'GET', url_regix: '', phase: 'request' },
-
-        redirect: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            destination: ''
-        },
-
-        forward: { method: 'GET', url_regix: '', phase: 'request' },
-
-        change_body: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            content: ''
-        },
-
-        extract_header: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            header_key: ''
-        },
-
-        remove_header: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            header_key: ''
-        },
-
-        extract_body_element: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            element_regix: '',
-            return_name: ''
-        },
-
-        extract_query: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            query_key: ''
-        },
-
-        edit_query: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            query_key: '',
-            new_value: ''
-        },
-
-        remove_query: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            query_key: ''
-        },
-
+        detect: {},
+        edit_body: { element_regix: '', new_value: '' },
+        remove_body_element: { element_regix: '' },
+        edit_headers: { value: '' },
+        reject: {},
+        redirect: { destination: '' },
+        forward: {},
+        change_body: { content: '' },
+        extract_header: { header_key: '' },
+        remove_header: { header_key: '' },
+        extract_body_element: { element_regix: '', return_name: '' },
+        extract_query: { query_key: '' },
+        edit_query: { query_key: '', new_value: '' },
+        remove_query: { query_key: '' },
         applyFunction: { function: '' },
-
-        APGMastercard : {
-            return_name: '',
-        },
-        CybersourceFlexV2: {
-            return_name: '',   
-        },
-
-        change_status_code: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'response',
-            status_code: 200
-        },
-
-        insertHeaderKey: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'response',
-            header_key: '',
-            header_value: ''
-        },
-
-        customDetect: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            regix_type: 'query',
-            value: ''
-        },
-
-        editUrlParam: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            param_regix: '',
-            new_value: ''
-        },
-
-        removeUrlParam: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            param_regix: ''
-        },
-
-        extractURLParams: {
-            method: 'GET',
-            url_regix: '',
-            phase: 'request',
-            param_regix: '',
-            return_name: ''
-        }
+        APGMastercard: { return_name: '' },
+        CybersourceFlexV2: { return_name: '' },
+        change_status_code: { status_code: 200 },
+        insertHeaderKey: { header_key: '', header_value: '' },
+        customDetect: { regix_type: 'query', value: '' },
+        editUrlParam: { param_regix: '', new_value: '' },
+        removeUrlParam: { param_regix: '' },
+        extractURLParams: { param_regix: '', return_name: '' }
     };
 
-    const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-    const PHASES = ['request', 'response'];
-    const ENCRYPTORS = ['CybersourceFlexV2', 'APGMastercard'];
+    let groups = [];
 
-    const VARIABLE_ALLOWED = [
-        'value',
-        'new_value',
-        'content',
-        'destination'
+    /* =========================
+       LOAD OLD DATA → GROUPS
+    ========================== */
 
-    ];
+    function groupSteps(flatSteps) {
+        const map = {};
 
-    let steps = [];
+        flatSteps.forEach(step => {
+            const p = step.params || {};
+            const key = `${p.method}|${p.url_regix}|${p.phase}`;
+
+            if (!map[key]) {
+                map[key] = {
+                    method: p.method || 'GET',
+                    url_regix: p.url_regix || '',
+                    phase: p.phase || 'request',
+                    steps: []
+                };
+            }
+
+            const { method, url_regix, phase, ...rest } = p;
+
+            map[key].steps.push({
+                action: step.action,
+                log: step.log || false,
+                params: rest
+            });
+        });
+
+        return Object.values(map);
+    }
 
     try {
-        steps = hiddenField.value
+        const parsed = hiddenField.value
             ? JSON.parse(hiddenField.value).steps || []
             : [];
+
+        groups = groupSteps(parsed);
+
     } catch {
-        steps = [];
+        groups = [];
     }
 
     /* =========================
-       VALUE NORMALIZATION
+       FLATTEN BEFORE SAVE
     ========================== */
 
-    function normalizeValue(v) {
+    function flattenGroups() {
+        const result = [];
 
-        if (typeof v === "object" && v !== null) {
-
-            if (v.type === "variable") {
-
-                let val = v.value || "";
-
-                if (!val.startsWith("{{"))
-                    val = "{{" + val;
-
-                if (!val.endsWith("}}"))
-                    val = val + "}}";
-
-                return val;
-            }
-
-            return v.value || "";
-        }
-
-        return v;
-    }
-
-    function normalizeSteps() {
-
-        return steps.map(step => {
-
-            const params = { ...step.params };
-
-            Object.keys(params).forEach(k => {
-                params[k] = normalizeValue(params[k]);
+        groups.forEach(group => {
+            group.steps.forEach(step => {
+                result.push({
+                    action: step.action,
+                    log: step.log,
+                    params: {
+                        ...step.params,
+                        method: group.method,
+                        url_regix: group.url_regix,
+                        phase: group.phase
+                    }
+                });
             });
-
-            return {
-                action: step.action,
-                log: step.log,
-                params: params
-            };
         });
+
+        return result;
     }
 
     function updateHiddenField() {
-
         hiddenField.value = JSON.stringify({
-            steps: normalizeSteps()
+            steps: flattenGroups()
         });
     }
 
     /* =========================
-       PARAM RENDERING
+       PARAMS RENDER
     ========================== */
 
     function renderParams(step, container) {
@@ -245,204 +132,15 @@ document.addEventListener('DOMContentLoaded', function () {
             row.className = 'form-row';
 
             const label = document.createElement('label');
-            label.textContent =
-                key.charAt(0).toUpperCase() + key.slice(1);
+            label.textContent = key;
 
-            label.style.display = 'block';
-
-            let input;
-
-            /* encryption select */
-
-            // if (step.action === 'encryption' && key === 'encryptor') {
-
-            //     input = document.createElement('select');
-
-            //     ENCRYPTORS.forEach(enc => {
-
-            //         const opt = document.createElement('option');
-
-            //         opt.value = enc;
-            //         opt.text = enc;
-
-            //         input.appendChild(opt);
-            //     });
-
-            //     input.value =
-            //         step.params.encryptor || template.encryptor;
-
-            //     input.onchange = () => {
-
-            //         step.params.encryptor = input.value;
-            //         updateHiddenField();
-            //     };
-
-            //     row.appendChild(label);
-            //     row.appendChild(input);
-            //     container.appendChild(row);
-            //     return;
-            // }
-
-            /* method */
-
-            if (key === 'method') {
-
-                input = document.createElement('select');
-
-                METHODS.forEach(m => {
-
-                    const opt = document.createElement('option');
-
-                    opt.value = m;
-                    opt.text = m;
-
-                    input.appendChild(opt);
-                });
-
-                input.value =
-                    step.params[key] || template[key];
-
-                input.onchange = () => {
-
-                    step.params[key] = input.value;
-                    updateHiddenField();
-                };
-
-                row.appendChild(label);
-                row.appendChild(input);
-                container.appendChild(row);
-                return;
-            }
-
-            /* phase */
-
-            if (key === 'phase') {
-
-                input = document.createElement('select');
-
-                PHASES.forEach(p => {
-
-                    const opt = document.createElement('option');
-
-                    opt.value = p;
-                    opt.text = p;
-
-                    input.appendChild(opt);
-                });
-
-                input.value =
-                    step.params[key] || template[key];
-
-                input.onchange = () => {
-
-                    step.params[key] = input.value;
-                    updateHiddenField();
-                };
-
-                row.appendChild(label);
-                row.appendChild(input);
-                container.appendChild(row);
-                return;
-            }
-
-            /* regex type */
-
-            if (key === 'regix_type') {
-
-                input = document.createElement('select');
-
-                REGEX_TYPES.forEach(t => {
-
-                    const opt = document.createElement('option');
-
-                    opt.value = t;
-                    opt.text = t;
-
-                    input.appendChild(opt);
-                });
-
-                input.value =
-                    step.params[key] || template[key];
-
-                input.onchange = () => {
-
-                    step.params[key] = input.value;
-                    updateHiddenField();
-                };
-
-                row.appendChild(label);
-                row.appendChild(input);
-                container.appendChild(row);
-                return;
-            }
-
-            /* variable selector */
-
-            if (VARIABLE_ALLOWED.includes(key) &&
-                step.action !== 'customDetect') {
-
-                const typeSelect =
-                    document.createElement('select');
-
-                typeSelect.innerHTML =
-                    `<option value="fixed">Fixed</option>
-                     <option value="variable">Variable</option>`;
-
-                const valueInput =
-                    document.createElement('input');
-
-                valueInput.type = 'text';
-                valueInput.className = 'vTextField';
-                valueInput.style.width = '50%';
-
-                let paramValue =
-                    step.params[key] ?? template[key];
-
-                if (typeof paramValue === 'object') {
-
-                    typeSelect.value = paramValue.type;
-                    valueInput.value = paramValue.value;
-
-                } else {
-
-                    typeSelect.value = 'fixed';
-                    valueInput.value = paramValue;
-                }
-
-                function updateParam() {
-
-                    step.params[key] = {
-                        type: typeSelect.value,
-                        value: valueInput.value
-                    };
-
-                    updateHiddenField();
-                }
-
-                typeSelect.onchange = updateParam;
-                valueInput.oninput = updateParam;
-
-                row.appendChild(label);
-                row.appendChild(typeSelect);
-                row.appendChild(valueInput);
-
-                container.appendChild(row);
-                return;
-            }
-
-            /* normal input */
-
-            input = document.createElement('input');
-
+            const input = document.createElement('input');
             input.type = 'text';
             input.className = 'vTextField';
-            input.style.width = '50%';
 
-            input.value =
-                step.params[key] ?? template[key];
+            input.value = step.params[key] ?? template[key];
 
             input.oninput = () => {
-
                 step.params[key] = input.value;
                 updateHiddenField();
             };
@@ -461,132 +159,215 @@ document.addEventListener('DOMContentLoaded', function () {
 
         container.innerHTML = '';
 
-        steps.forEach((step, index) => {
+        groups.forEach((group, gIndex) => {
 
-            if (step.log === undefined)
-                step.log = false;
+            const groupBlock = document.createElement('fieldset');
+            groupBlock.className = 'module aligned';
 
-            const block = document.createElement('div');
+            /* HEADER */
 
-            block.className = 'inline-related module';
+            const headerRow = document.createElement('div');
+            headerRow.className = 'form-row';
 
-            block.style.padding = '10px';
-            block.style.marginBottom = '10px';
+            /* METHOD */
+            const methodField = document.createElement('div');
+            const methodLabel = document.createElement('label');
+            methodLabel.textContent = 'Method';
 
-            const actionRow = document.createElement('div');
-            actionRow.className = 'form-row';
+            const methodSelect = document.createElement('select');
+            methodSelect.className = 'vSelect';
 
-            const label = document.createElement('label');
-            label.textContent = 'Action';
-
-            const select = document.createElement('select');
-
-            Object.keys(ACTIONS).forEach(a => {
-
-                const opt =
-                    document.createElement('option');
-
-                opt.value = a;
-                opt.text = a;
-
-                select.appendChild(opt);
+            METHODS.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.text = m;
+                methodSelect.appendChild(opt);
             });
 
-            select.value = step.action;
+            methodSelect.value = group.method;
+            methodSelect.onchange = () => {
+                group.method = methodSelect.value;
+                updateHiddenField();
+            };
 
-            select.onchange = () => {
+            methodField.appendChild(methodLabel);
+            methodField.appendChild(methodSelect);
 
-                step.action = select.value;
+            /* URL */
+            const urlField = document.createElement('div');
+            const urlLabel = document.createElement('label');
+            urlLabel.textContent = 'URL Regex';
 
-                step.params = {
-                    ...ACTIONS[step.action]
+            const urlInput = document.createElement('input');
+            urlInput.className = 'vTextField';
+            urlInput.value = group.url_regix;
+
+            urlInput.oninput = () => {
+                group.url_regix = urlInput.value;
+                updateHiddenField();
+            };
+
+            urlField.appendChild(urlLabel);
+            urlField.appendChild(urlInput);
+
+            /* PHASE */
+            const phaseField = document.createElement('div');
+            const phaseLabel = document.createElement('label');
+            phaseLabel.textContent = 'Phase';
+
+            const phaseSelect = document.createElement('select');
+            phaseSelect.className = 'vSelect';
+
+            PHASES.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                opt.text = p;
+                phaseSelect.appendChild(opt);
+            });
+
+            phaseSelect.value = group.phase;
+            phaseSelect.onchange = () => {
+                group.phase = phaseSelect.value;
+                updateHiddenField();
+            };
+
+            phaseField.appendChild(phaseLabel);
+            phaseField.appendChild(phaseSelect);
+
+            headerRow.appendChild(methodField);
+            headerRow.appendChild(urlField);
+            headerRow.appendChild(phaseField);
+
+            groupBlock.appendChild(headerRow);
+
+            /* ================= STEPS ================= */
+
+            group.steps.forEach((step, index) => {
+
+                const block = document.createElement('div');
+                block.className = 'inline-related';
+                block.style.marginTop = '10px';
+
+                /* ACTION */
+                const actionRow = document.createElement('div');
+                actionRow.className = 'form-row';
+
+                const select = document.createElement('select');
+                select.className = 'vSelect';
+
+                Object.keys(ACTIONS).forEach(a => {
+                    const opt = document.createElement('option');
+                    opt.value = a;
+                    opt.text = a;
+                    select.appendChild(opt);
+                });
+
+                select.value = step.action;
+
+                select.onchange = () => {
+                    step.action = select.value;
+                    step.params = { ...ACTIONS[step.action] };
+                    render();
+                    updateHiddenField();
                 };
 
-                render();
-                updateHiddenField();
-            };
+                actionRow.appendChild(select);
+                block.appendChild(actionRow);
 
-            actionRow.appendChild(label);
-            actionRow.appendChild(select);
+                /* LOG */
+                const logRow = document.createElement('div');
+                logRow.className = 'form-row';
 
-            block.appendChild(actionRow);
+                const logLabel = document.createElement('label');
+                logLabel.textContent = 'Log';
 
-            /* log checkbox */
+                const logCheckbox = document.createElement('input');
+                logCheckbox.type = 'checkbox';
+                logCheckbox.checked = step.log;
 
-            const logRow = document.createElement('div');
+                logCheckbox.onchange = () => {
+                    step.log = logCheckbox.checked;
+                    updateHiddenField();
+                };
 
-            const logLabel = document.createElement('label');
+                logRow.appendChild(logLabel);
+                logRow.appendChild(logCheckbox);
 
-            logLabel.textContent = 'Log Step';
+                block.appendChild(logRow);
 
-            const logCheckbox =
-                document.createElement('input');
+                /* PARAMS */
+                const paramsContainer = document.createElement('div');
+                block.appendChild(paramsContainer);
 
-            logCheckbox.type = 'checkbox';
+                renderParams(step, paramsContainer);
 
-            logCheckbox.checked = step.log;
+                /* REMOVE STEP */
+                const removeBtn = document.createElement('input');
+                removeBtn.type = 'button';
+                removeBtn.value = 'Remove Step';
+                removeBtn.className = 'button';
 
-            logCheckbox.onchange = () => {
+                removeBtn.onclick = () => {
+                    group.steps.splice(index, 1);
+                    render();
+                    updateHiddenField();
+                };
 
-                step.log = logCheckbox.checked;
-                updateHiddenField();
-            };
+                block.appendChild(removeBtn);
 
-            logRow.appendChild(logLabel);
-            logRow.appendChild(logCheckbox);
-
-            block.appendChild(logRow);
-
-            const paramsContainer =
-                document.createElement('div');
-
-            paramsContainer.style.marginTop = '5px';
-
-            block.appendChild(paramsContainer);
-
-            renderParams(step, paramsContainer);
-
-            const removeBtn =
-                document.createElement('input');
-
-            removeBtn.type = 'button';
-            removeBtn.value = 'Remove';
-            removeBtn.className = 'default';
-
-            removeBtn.onclick = () => {
-
-                steps.splice(index, 1);
-
-                render();
-                updateHiddenField();
-            };
-
-            block.appendChild(removeBtn);
-
-            container.appendChild(block);
-        });
-
-        /* add step */
-
-        const addBtn = document.createElement('input');
-
-        addBtn.type = 'button';
-        addBtn.value = 'Add Step';
-        addBtn.className = 'default';
-
-        addBtn.onclick = () => {
-
-            steps.push({
-                action: 'detect',
-                log: false,
-                params: { ...ACTIONS.detect }
+                groupBlock.appendChild(block);
             });
 
+            /* ADD STEP */
+            const addStepBtn = document.createElement('input');
+            addStepBtn.type = 'button';
+            addStepBtn.value = 'Add Step';
+            addStepBtn.className = 'addlink';
+
+            addStepBtn.onclick = () => {
+                group.steps.push({
+                    action: 'detect',
+                    log: false,
+                    params: {}
+                });
+                render();
+            };
+
+            groupBlock.appendChild(addStepBtn);
+
+            /* REMOVE GROUP */
+            const removeGroupBtn = document.createElement('input');
+            removeGroupBtn.type = 'button';
+            removeGroupBtn.value = 'Remove Group';
+            removeGroupBtn.className = 'deletelink';
+
+            removeGroupBtn.onclick = () => {
+                groups.splice(gIndex, 1);
+                render();
+            };
+
+            groupBlock.appendChild(removeGroupBtn);
+
+            container.appendChild(groupBlock);
+        });
+
+        /* ADD GROUP */
+        const addGroupBtn = document.createElement('input');
+        addGroupBtn.type = 'button';
+        addGroupBtn.value = 'Add Request Group';
+        addGroupBtn.className = 'addlink';
+
+        addGroupBtn.onclick = () => {
+            groups.push({
+                method: 'GET',
+                url_regix: '',
+                phase: 'request',
+                steps: []
+            });
             render();
-            updateHiddenField();
         };
 
-        container.appendChild(addBtn);
+        container.appendChild(addGroupBtn);
 
         updateHiddenField();
     }

@@ -1,0 +1,16 @@
+.dual-listbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dual-listbox select {
+    width: 200px;
+}
+.dual-list-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.dual-list-buttons button {
+    width: 50px;
+}

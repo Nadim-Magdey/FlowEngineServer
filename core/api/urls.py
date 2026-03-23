@@ -16,7 +16,7 @@ urlpatterns = [
 
     path('log/', UserLogsView().as_view(), name='user-log'),
     path('notification/', UserNotification().as_view(), name='user-notification'),
-
+    
     path('user-info/', UserInfoView().as_view(), name='user-info'),
     path('user-proxy/', UserProxyView().as_view(), name='user-proxy'),
     path('telegram/create/', CreateAuthSessionView.as_view(), name='create_telegram_session'),

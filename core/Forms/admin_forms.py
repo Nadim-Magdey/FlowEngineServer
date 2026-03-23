@@ -10,7 +10,7 @@ class ServiceAdminForm(forms.ModelForm):
     
     class Meta:
         model = Service
-        fields = ("users", "name", "description", "optional_flows")
+        fields = ("users", "name", "description", "optional_flows", "group")
 
     class Media:
         js = (
