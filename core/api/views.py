@@ -1,4 +1,5 @@
 from posixpath import isabs
+from click import group
 import jwt
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -69,7 +70,9 @@ class ServiceFlowsView(APIView):
                         "group": of.group.name
                     }
                     for of in s.optional_flows.filter(is_active=True)
-                ]
+                ],
+                "group": s.group
+
             })
             
         user_optional_flows = [

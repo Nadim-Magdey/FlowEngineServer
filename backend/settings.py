@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import timedelta
 STATIC_URL = '/static/'
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(f"base dir {BASE_DIR}")
 SECRET_KEY = 'django-insecure-replace-this-with-your-secret'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # you can name it anything
 DEBUG = True
@@ -37,7 +37,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "core" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

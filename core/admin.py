@@ -1,21 +1,23 @@
 from django.contrib import admin
+
+from core.admin_mixin import FlowIOAdminMixin
 from .models import AllowedTelgramUsers, FlowConstraintGroup,Notifications, Service, FixedFlow, OptionalFlow, TelegramAuthSession, UserInactiveMessage, UserLogs
 from .Forms.admin_forms import ServiceAdminForm
 from .Forms.fixed_flow_forms import FixedFlowsForm
 from .Forms.optional_flow_form import OptionalFlowForm
 
 @admin.register(FixedFlow)
-class FixedFlows(admin.ModelAdmin):
+class FixedFlows(FlowIOAdminMixin, admin.ModelAdmin):
     form = FixedFlowsForm
     list_display = ("name", "users_list", "group")
-    
+    # change_list_template = "admin/core/fixedflow/change_list.html"
     def users_list(self, obj):
         return ", ".join(u.username for u in obj.users.all())
     
     users_list.short_description = "Users"
     
 @admin.register(Service)
-class ServiceAdmin(admin.ModelAdmin):
+class ServiceAdmin(FlowIOAdminMixin,admin.ModelAdmin):
     form = ServiceAdminForm
     list_display = ("name", "users_list", "created_at", "group")
     filter_horizontal = ("users","optional_flows")
@@ -27,7 +29,7 @@ class ServiceAdmin(admin.ModelAdmin):
     
     
 @admin.register(OptionalFlow)
-class OptionalFlowAdmin(admin.ModelAdmin):
+class OptionalFlowAdmin(FlowIOAdminMixin,admin.ModelAdmin):
     form = OptionalFlowForm
     list_display = ('name', 'is_active', 'order', 'created_at', "group") 
     ordering = ('order',)
