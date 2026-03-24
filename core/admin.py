@@ -7,7 +7,7 @@ from .Forms.fixed_flow_forms import FixedFlowsForm
 from .Forms.optional_flow_form import OptionalFlowForm
 
 @admin.register(FixedFlow)
-class FixedFlows(FlowIOAdminMixin, admin.ModelAdmin):
+class FixedFlows(admin.ModelAdmin):
     form = FixedFlowsForm
     list_display = ("name", "users_list", "group")
     # change_list_template = "admin/core/fixedflow/change_list.html"
@@ -17,7 +17,7 @@ class FixedFlows(FlowIOAdminMixin, admin.ModelAdmin):
     users_list.short_description = "Users"
     
 @admin.register(Service)
-class ServiceAdmin(FlowIOAdminMixin,admin.ModelAdmin):
+class ServiceAdmin(admin.ModelAdmin):
     form = ServiceAdminForm
     list_display = ("name", "users_list", "created_at", "group")
     filter_horizontal = ("users","optional_flows")
@@ -29,7 +29,7 @@ class ServiceAdmin(FlowIOAdminMixin,admin.ModelAdmin):
     
     
 @admin.register(OptionalFlow)
-class OptionalFlowAdmin(FlowIOAdminMixin,admin.ModelAdmin):
+class OptionalFlowAdmin(admin.ModelAdmin):
     form = OptionalFlowForm
     list_display = ('name', 'is_active', 'order', 'created_at', "group") 
     ordering = ('order',)
