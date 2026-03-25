@@ -67,11 +67,11 @@ class ServiceFlowsView(APIView):
                         "name": of.name,
                         "flows": of.flows,
                         "order": of.order,
-                        "group": of.group.name
+                        "group": of.group.name if of.group else None
                     }
                     for of in s.optional_flows.filter(is_active=True)
                 ],
-                "group": s.group
+                "group": s.group if s.group else None
 
             })
             
@@ -81,7 +81,7 @@ class ServiceFlowsView(APIView):
                 "name": of.name,
                 "flows": of.flows,
                 "order": of.order,
-                "group": of.group.name
+                "group": of.group.name if of.group else None
             }
             for of in request.user.optional_flows.filter(is_active=True)
         ]
@@ -95,7 +95,7 @@ class ServiceFlowsView(APIView):
                 "notify_condition": of.notify_condition,
                 "notify_variables": of.notify_variables,
                 "success_value": of.success_value,
-                "group": of.group.name
+                "group": of.group.name if of.group else None
             }
             for of in request.user.fixed_flows.filter(is_active=True)
         ]

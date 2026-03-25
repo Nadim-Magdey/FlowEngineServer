@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from core.admin_mixin import FlowIOAdminMixin
 from .models import AllowedTelgramUsers, FlowConstraintGroup,Notifications, Service, FixedFlow, OptionalFlow, TelegramAuthSession, UserInactiveMessage, UserLogs
 from .Forms.admin_forms import ServiceAdminForm
 from .Forms.fixed_flow_forms import FixedFlowsForm
@@ -95,4 +94,5 @@ class TelegramAuthSessionAdmin(admin.ModelAdmin):
 @admin.register(FlowConstraintGroup)
 class FlowConstraintGroup(admin.ModelAdmin):
     list_display = ('name', 'id')
+    
     

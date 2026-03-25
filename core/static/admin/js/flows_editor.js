@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.createElement('div');
     container.className = 'inline-group';
     hiddenField.closest('.form-row').after(container);
-
+    
     /* =========================
        ACTIONS
     ========================== */
