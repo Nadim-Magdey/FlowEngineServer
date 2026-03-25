@@ -19,7 +19,6 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
-import traceback
 import datetime
 from django.utils import timezone
 
@@ -67,7 +66,7 @@ class ServiceFlowsView(APIView):
                         "name": of.name,
                         "flows": of.flows,
                         "order": of.order,
-                        "group": of.group.name if of.group else None
+                        "group": of.group if of.group else None
                     }
                     for of in s.optional_flows.filter(is_active=True)
                 ],
