@@ -1,15 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+
+    function exportToJson() {
+        const dataStr = hiddenField.value; // Get the current state
+        if (!dataStr || dataStr === '{"steps":[]}') {
+            alert("No data to export!");
+            return;
+        }
+
+        // Create a blob and a temporary download link
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        // Naming the file (optional: add timestamp)
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.href = url;
+        link.download = `flow_export_${timestamp}.json`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+}
+
+
+    // 1. Create a hidden file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.json';
+        fileInput.style.display = 'none';
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    
+                    // Validate structure (expecting { "steps": [...] })
+                    if (importedData && Array.isArray(importedData.steps)) {
+                        // Update the global groups variable using your existing grouping function
+                        groups = groupSteps(importedData.steps);
+                        
+                        // Refresh the UI and the hidden Django field
+                        render();
+                        updateHiddenField();
+                        alert("✅ Flows imported successfully!");
+                    } else {
+                        alert("❌ Invalid file format. Please use a valid Flow JSON.");
+                    }
+                } catch (err) {
+                    alert("❌ Error parsing JSON file.");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        };
+
     const hiddenField = document.querySelector('input[name="flows_json"]');
     if (!hiddenField) return;
-
+    
     const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
     const PHASES = ['request', 'response'];
 
     const container = document.createElement('div');
     container.className = 'inline-group';
     hiddenField.closest('.form-row').after(container);
-    
+
     /* =========================
        ACTIONS
     ========================== */
@@ -158,6 +218,48 @@ document.addEventListener('DOMContentLoaded', function () {
     function render() {
 
         container.innerHTML = '';
+        container.appendChild(document.createElement('hr'));
+
+        //import buttun
+        const importBtn = document.createElement('input');
+        importBtn.type = 'button';
+        importBtn.value = '📤 Import Flows from JSON';
+        importBtn.className = 'button';
+        
+        // Style it slightly different (e.g., Blue or a different Green)
+        importBtn.style.backgroundColor = '#17a2b8'; // Teal/Info Blue
+        importBtn.style.color = 'white';
+        importBtn.style.fontWeight = 'bold';
+        importBtn.style.padding = '10px 20px';
+        importBtn.style.marginLeft = '10px';
+        importBtn.style.border = 'none';
+        importBtn.style.borderRadius = '4px';
+        importBtn.style.cursor = 'pointer';
+
+        // When clicked, trigger the hidden file input
+        importBtn.onclick = () => fileInput.click();
+
+        // Append them to the container
+        container.appendChild(fileInput);
+        container.appendChild(importBtn);
+
+        container.appendChild(document.createElement('hr'));
+
+        // export btn 
+        container.appendChild(document.createElement('hr'));
+        const exportBtn = document.createElement('input');
+        exportBtn.type = 'button';
+        exportBtn.value = 'Export to JSON File';
+        exportBtn.className = 'button'; // Django admin default button style
+        exportBtn.style.marginLeft = '10px';
+        exportBtn.style.backgroundColor = '#28a745'; // Django header blue
+        exportBtn.style.color = 'white';
+
+        exportBtn.onclick = exportToJson;
+
+        // Append it next to your "Add Request Group" button
+        container.appendChild(exportBtn);
+        container.appendChild(document.createElement('hr'));
 
         groups.forEach((group, gIndex) => {
 
@@ -168,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const headerRow = document.createElement('div');
             headerRow.className = 'form-row';
-
+            // headerRow.style.marginLeft = "5%";
             /* METHOD */
             const methodField = document.createElement('div');
             const methodLabel = document.createElement('label');
@@ -247,11 +349,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const block = document.createElement('div');
                 block.className = 'inline-related';
                 block.style.marginTop = '10px';
-
+                block.style.marginLeft  = "5%"
                 /* ACTION */
                 const actionRow = document.createElement('div');
                 actionRow.className = 'form-row';
-
+                // actionRow.style.marginLeft  = "5%"
                 const select = document.createElement('select');
                 select.className = 'vSelect';
 
@@ -306,7 +408,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 removeBtn.type = 'button';
                 removeBtn.value = 'Remove Step';
                 removeBtn.className = 'button';
-
+                removeBtn.style.color = "white"
+                removeBtn.style.backgroundColor = "#D32F2F"
                 removeBtn.onclick = () => {
                     group.steps.splice(index, 1);
                     render();
@@ -340,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
             removeGroupBtn.type = 'button';
             removeGroupBtn.value = 'Remove Group';
             removeGroupBtn.className = 'deletelink';
-
+            removeGroupBtn.style.backgroundColor = "#D32F2F"
             removeGroupBtn.onclick = () => {
                 groups.splice(gIndex, 1);
                 render();
