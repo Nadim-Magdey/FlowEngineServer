@@ -354,7 +354,7 @@ function renderParams(step, container) {
             /* URL */
             const urlField = document.createElement('div');
             const urlLabel = document.createElement('label');
-            urlLabel.textContent = 'URL Regex';
+            urlLabel.textContent = 'URL Regix';
 
             const urlInput = document.createElement('input');
             urlInput.className = 'vTextField';
