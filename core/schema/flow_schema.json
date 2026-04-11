@@ -347,6 +347,7 @@
             {
               "type": "object",
               "properties": {
+                "header_key": { "type": "string" },
                 "type": { "type": "string", "enum": ["fixed", "variable"] },
                 "value": { "type": "string" }
               },
