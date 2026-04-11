@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         detect: {},
         edit_body: { element_regix: '', new_value: '' },
         remove_body_element: { element_regix: '' },
-        edit_headers: { value: '',header_key : ''},
+        edit_headers: { value: '', header_key : ''},
         reject: {},
         redirect: { destination: '' },
         forward: {},
