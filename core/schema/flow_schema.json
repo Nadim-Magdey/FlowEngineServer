@@ -341,13 +341,14 @@
         "method": { "type": "string" },
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
+        "header_key": { "type": "string" },
+
         "values": {
           "oneOf": [
             { "type": "string" },
             {
               "type": "object",
               "properties": {
-                "header_key": { "type": "string" },
                 "type": { "type": "string", "enum": ["fixed", "variable"] },
                 "value": { "type": "string" }
               },
@@ -357,7 +358,7 @@
           ]
         }
       },
-      "required": ["method", "url_regix", "phase", "values"],
+      "required": ["method", "url_regix", "phase", "values", "header_key"],
       "additionalProperties": false
     },
     "rejectParams": {
