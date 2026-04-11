@@ -180,36 +180,92 @@ document.addEventListener('DOMContentLoaded', function () {
        PARAMS RENDER
     ========================== */
 
-    function renderParams(step, container) {
+const VARIABLE_FIELDS = [
+    'new_value',
+    'value',
+    'content',
+    'destination'
+];
 
-        container.innerHTML = '';
+function renderParams(step, container) {
 
-        const template = ACTIONS[step.action];
+    container.innerHTML = '';
+    const template = ACTIONS[step.action];
 
-        Object.keys(template).forEach(key => {
+    Object.keys(template).forEach(key => {
 
-            const row = document.createElement('div');
-            row.className = 'form-row';
+        const row = document.createElement('div');
+        row.className = 'form-row';
 
-            const label = document.createElement('label');
-            label.textContent = key;
+        const label = document.createElement('label');
+        label.textContent = key;
 
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'vTextField';
+        let paramValue = step.params[key] ?? template[key];
 
-            input.value = step.params[key] ?? template[key];
+        /* =========================
+           VARIABLE SUPPORT
+        ========================== */
 
-            input.oninput = () => {
-                step.params[key] = input.value;
+        if (VARIABLE_FIELDS.includes(key)) {
+
+            const typeSelect = document.createElement('select');
+            typeSelect.className = 'vSelect';
+
+            typeSelect.innerHTML = `
+                <option value="fixed">Fixed</option>
+                <option value="variable">Variable</option>
+            `;
+
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.className = 'vTextField';
+
+            if (typeof paramValue === 'object') {
+                typeSelect.value = paramValue.type || 'fixed';
+                valueInput.value = paramValue.value || '';
+            } else {
+                typeSelect.value = 'fixed';
+                valueInput.value = paramValue || '';
+            }
+
+            function updateParam() {
+                step.params[key] = {
+                    type: typeSelect.value,
+                    value: valueInput.value
+                };
                 updateHiddenField();
-            };
+            }
+
+            typeSelect.onchange = updateParam;
+            valueInput.oninput = updateParam;
 
             row.appendChild(label);
-            row.appendChild(input);
+            row.appendChild(typeSelect);
+            row.appendChild(valueInput);
             container.appendChild(row);
-        });
-    }
+            return;
+        }
+
+        /* =========================
+           NORMAL INPUT
+        ========================== */
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'vTextField';
+        input.value = paramValue;
+
+        input.oninput = () => {
+            step.params[key] = input.value;
+            updateHiddenField();
+        };
+
+        row.appendChild(label);
+        row.appendChild(input);
+        container.appendChild(row);
+    });
+}
+
 
     /* =========================
        MAIN RENDER
