@@ -8,7 +8,7 @@ SECRET_KEY = 'django-insecure-replace-this-with-your-secret'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # you can name it anything
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', "bazookabeef.pythonanywhere.com"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
