@@ -246,6 +246,27 @@
     }
   },
   "definitions": {
+    "DynamicValue": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["fixed", "variable", "expression"]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "insertHeaderParams": {
       "type": "object",
       "properties": {
@@ -253,7 +274,7 @@
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
         "header_key": { "type": "string" },
-        "header_value": { "type": "string" }
+        "header_value": { "$ref": "#/definitions/removeUrlParamParams"}
       },
 
       "required": ["method", "url_regix", "phase", "header_key", "header_value"],
@@ -294,18 +315,7 @@
         "phase": { "type": "string" },
         "element_regix": { "type": "string" },
         "new_value": {
-          "oneOf": [
-            { "type": "string" },
-            {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "enum": ["fixed", "variable"] },
-                "value": { "type": "string" }
-              },
-              "required": ["type", "value"],
-              "additionalProperties": false
-            }
-          ]
+          "$ref": "#/definitions/DynamicValue" 
         }
       },
       "required": ["method", "url_regix", "phase", "element_regix", "new_value"],
@@ -342,23 +352,11 @@
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
         "header_key": { "type": "string" },
-
-        "values": {
-          "oneOf": [
-            { "type": "string" },
-            {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "enum": ["fixed", "variable"] },
-                "value": { "type": "string" }
-              },
-              "required": ["type", "value"],
-              "additionalProperties": false
-            }
-          ]
+        "header_value": {
+            "$ref": "#/definitions/DynamicValue" 
         }
       },
-      "required": ["method", "url_regix", "phase", "values", "header_key"],
+      "required": ["method", "url_regix", "phase", "header_key","header_value"],
       "additionalProperties": false
     },
     "rejectParams": {
@@ -378,18 +376,7 @@
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
         "destination": {
-          "oneOf": [
-            { "type": "string" },
-            {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "enum": ["fixed", "variable"] },
-                "value": { "type": "string" }
-              },
-              "required": ["type", "value"],
-              "additionalProperties": false
-            }
-          ]
+           "$ref": "#/definitions/DynamicValue" 
         }
       },
       "required": ["method", "url_regix", "phase", "destination"],
@@ -412,18 +399,7 @@
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
         "content": {
-          "oneOf": [
-            { "type": "string" },
-            {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "enum": ["fixed", "variable"] },
-                "value": { "type": "string" }
-              },
-              "required": ["type", "value"],
-              "additionalProperties": false
-            }
-          ]
+            "$ref": "#/definitions/DynamicValue" 
         }
       },
       "required": ["method", "url_regix", "phase", "content"],
@@ -482,18 +458,7 @@
         "phase": { "type": "string" },
         "query_key": { "type": "string" },
         "new_value": {
-          "oneOf": [
-            { "type": "string" },
-            {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string", "enum": ["fixed", "variable"] },
-                "value": { "type": "string" }
-              },
-              "required": ["type", "value"],
-              "additionalProperties": false
-            }
-          ]
+           "$ref": "#/definitions/DynamicValue" 
         }
       },
       "required": ["method", "url_regix", "phase", "query_key", "new_value"],
@@ -534,8 +499,8 @@
       "additionalProperties": false
     },
     "extractUrlParamsParams":{
-            "type": "object",
-      "properties": {
+        "type": "object",
+        "properties": {
         "method": { "type": "string" },
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
@@ -552,7 +517,7 @@
         "url_regix": { "type": "string" },
         "phase": { "type": "string" },
         "param_regix": { "type": "string" },
-        "new_value" : { "type": "string" }
+        "new_value" : {  "$ref": "#/definitions/DynamicValue" }
       },
       "required": ["method", "url_regix", "phase", "param_regix", "new_value"],
       "additionalProperties": false

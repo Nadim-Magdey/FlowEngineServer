@@ -78,13 +78,13 @@ document.addEventListener('DOMContentLoaded', function () {
         detect: {},
         edit_body: { element_regix: '', new_value: '' },
         remove_body_element: { element_regix: '' },
-        edit_headers: { value: '', header_key : ''},
+        edit_headers: { header_key: '', header_value: '' },
         reject: {},
         redirect: { destination: '' },
         forward: {},
         change_body: { content: '' },
         extract_header: { header_key: '' },
-        remove_header: { header_key: '',  },
+        remove_header: { header_key: '', header_value: '' },
         extract_body_element: { element_regix: '', return_name: '' },
         extract_query: { query_key: '' },
         edit_query: { query_key: '', new_value: '' },
@@ -184,7 +184,8 @@ const VARIABLE_FIELDS = [
     'new_value',
     'value',
     'content',
-    'destination'
+    'destination',
+    "header_value",
 ];
 
 function renderParams(step, container) {
@@ -193,7 +194,7 @@ function renderParams(step, container) {
     const template = ACTIONS[step.action];
 
     Object.keys(template).forEach(key => {
-
+        
         const row = document.createElement('div');
         row.className = 'form-row';
 
