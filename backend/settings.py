@@ -8,7 +8,7 @@ SECRET_KEY = 'django-insecure-replace-this-with-your-secret'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # you can name it anything
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', "bazookabeef.pythonanywhere.com"]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,8 +82,4 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "kyson-nonaesthetic-louella.ngrok-free.dev",
-]
+ALLOWED_HOSTS = ['*', "bazookabeef.pythonanywhere.com"]
